@@ -74,7 +74,7 @@
             
             <!-- Logotipo Institucional con Fallback SVG -->
             <div class="flex flex-col items-center justify-center mb-6">
-                <img src="img/Proyecto app programación parcial (1).png" alt="MOTORBASE Logo" class="h-12 w-auto mb-3 object-contain" 
+                <img src="logo_motorbase.png" alt="MOTORBASE Logo" class="h-12 w-auto mb-3 object-contain" 
                      onerror="this.style.display='none'; document.getElementById('login-logo-fallback').classList.remove('hidden');">
                 <div id="login-logo-fallback" class="hidden flex items-center gap-2.5 mb-3">
                     <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-motorbase-blue to-motorbase-cyan flex items-center justify-center shadow-lg shadow-motorbase-blue/20">
@@ -147,7 +147,7 @@
                     
                     <!-- Logotipo Oficial y Rol -->
                     <div class="flex items-center gap-3">
-                        <img src="img/Proyecto app programación parcial (1).png" alt="MOTORBASE" class="h-10 w-auto object-contain"
+                        <img src="logo_motorbase.png" alt="MOTORBASE" class="h-10 w-auto object-contain"
                              onerror="this.style.display='none'; document.getElementById('header-logo-fallback').classList.remove('hidden');">
                         <div id="header-logo-fallback" class="hidden flex items-center gap-2">
                             <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-motorbase-blue to-motorbase-cyan flex items-center justify-center">
@@ -521,13 +521,167 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- LÓGICA DE APLICACIÓN MOTORBASE                                        -->
+    <!-- FIREBASE & LÓGICA DE APLICACIÓN MOTORBASE                             -->
     <!-- ===================================================================== -->
-    <script>
-        // --- ESTADO GLOBAL DE LA APLICACIÓN ---
-        let currentUser = null; // { username, role }
-        let activeTab = 'tablero';
-        let activeReentryPlate = null;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuración de Firebase y variables globales del entorno
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'motorbase-default-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyDummyKeyForLocalTestingOnlyABC123",
+            authDomain: "motorbase-app.firebaseapp.com",
+            projectId: "motorbase-app",
+            storageBucket: "motorbase-app.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+
+        let app, db, auth;
+        let currentUser = null;
+        let orders = [];
+        let auditLogs = [];
+
+        // Inicializar Firebase
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                setupFirestoreListeners();
+            };
+            initAuth();
+        } catch (e) {
+            console.warn("Firebase initialization warning (falling back to memory):", e);
+        }
+
+        function setupFirestoreListeners() {
+            if (!auth || !db) return;
+
+            // Escuchar Órdenes (Public Data path)
+            const ordersRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+            onSnapshot(ordersRef, (snapshot) => {
+                if (!snapshot.empty) {
+                    orders = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+                } else if (orders.length === 0) {
+                    // Seed inicial si está vacío
+                    seedInitialData();
+                }
+                renderAll();
+            }, (error) => {
+                console.error("Error listening to orders:", error);
+            });
+
+            // Escuchar Auditoría (Public Data path)
+            const auditRef = collection(db, 'artifacts', appId, 'public', 'data', 'audit');
+            onSnapshot(auditRef, (snapshot) => {
+                if (!snapshot.empty) {
+                    auditLogs = snapshot.docs.map(docSnap => docSnap.data());
+                    // Ordenar cronológicamente descendente si tienen timestamp numérico o string
+                    auditLogs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                }
+                renderAudit();
+            }, (error) => {
+                console.error("Error listening to audit:", error);
+            });
+        }
+
+        async function seedInitialData() {
+            const initialOrders = [
+                {
+                    placa: 'P-892JKL',
+                    vehiculo: 'Mazda CX-5 2021',
+                    cliente: 'Sofía Castellanos',
+                    telefono: '55128890',
+                    servicio: 'Diagnóstico de sistema eléctrico y cambio de batería.',
+                    costo: 1150.00,
+                    isDomicilio: false,
+                    status: 'espera',
+                    fechaLlegada: '17/11/2026',
+                    horaLlegada: '08:15 hrs',
+                    horaFase: '08:15 hrs',
+                    fechaEntrega: null,
+                    mecanico: 'Carlos Mendoza',
+                    createdAt: Date.now()
+                },
+                {
+                    placa: 'P-314MNB',
+                    vehiculo: 'Honda Civic 2019',
+                    cliente: 'Diego Morales',
+                    telefono: '42109934',
+                    servicio: 'Cambio de kit de distribución y bomba de agua.',
+                    costo: 1850.00,
+                    isDomicilio: false,
+                    status: 'reparacion',
+                    fechaLlegada: '17/11/2026',
+                    horaLlegada: '09:00 hrs',
+                    horaFase: '09:30 hrs',
+                    fechaEntrega: null,
+                    mecanico: 'Carlos Mendoza',
+                    createdAt: Date.now() - 1000
+                },
+                {
+                    placa: 'P-771QWE',
+                    vehiculo: 'Mitsubishi L200 2023',
+                    cliente: 'Constructora El Roble',
+                    telefono: '58901122',
+                    servicio: 'Auxilio vial a domicilio: cambio de alternador y faja.',
+                    costo: 1425.00,
+                    isDomicilio: true,
+                    status: 'domicilio',
+                    fechaLlegada: '17/11/2026',
+                    horaLlegada: '10:10 hrs',
+                    horaFase: '10:15 hrs',
+                    fechaEntrega: null,
+                    mecanico: 'Carlos Mendoza',
+                    createdAt: Date.now() - 2000
+                },
+                {
+                    placa: 'P-509RTY',
+                    vehiculo: 'Kia Sportage 2020',
+                    cliente: 'Valeria Méndez',
+                    telefono: '30445566',
+                    servicio: 'Servicio mayor 60,000 km, alineación y balanceo.',
+                    costo: 890.00,
+                    isDomicilio: false,
+                    status: 'listos',
+                    fechaLlegada: '17/11/2026',
+                    horaLlegada: '07:45 hrs',
+                    horaFase: '11:40 hrs',
+                    fechaEntrega: null,
+                    mecanico: 'Carlos Mendoza',
+                    createdAt: Date.now() - 3000
+                },
+                {
+                    placa: 'P-456XYZ',
+                    vehiculo: 'Toyota Hilux 2022',
+                    cliente: 'Andrés Villagrán',
+                    telefono: '50112233',
+                    servicio: 'Cambio de aceite sintético 5W30 y pastillas de freno delanteras.',
+                    costo: 450.00,
+                    isDomicilio: true,
+                    status: 'entregado',
+                    fechaLlegada: '24/10/2026',
+                    horaLlegada: '08:30 hrs',
+                    horaFase: '14:15 hrs',
+                    fechaEntrega: '24/10/2026 14:15 hrs',
+                    mecanico: 'Carlos Mendoza',
+                    createdAt: Date.now() - 4000
+                }
+            ];
+
+            for (const ord of initialOrders) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), ord);
+            }
+        }
 
         // Formateador oficial de moneda local (Quetzales - GTQ)
         function formatGTQ(amount) {
@@ -535,7 +689,7 @@
             return `Q ${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} GTQ`;
         }
 
-        // Utilidad de fecha y hora actual (DD/MM/YYYY y HH:MM hrs)
+        // Utilidad de fecha y hora actual
         function getCurrentDateTime() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
@@ -550,122 +704,6 @@
             };
         }
 
-        // --- DATOS INICIALES PRECARGADOS (MOCK REALISTA) ---
-        let orders = [
-            {
-                id: 'ORD-101',
-                placa: 'P-892JKL',
-                vehiculo: 'Mazda CX-5 2021',
-                cliente: 'Sofía Castellanos',
-                telefono: '55128890',
-                servicio: 'Diagnóstico de sistema eléctrico y cambio de batería.',
-                costo: 1150.00,
-                isDomicilio: false,
-                status: 'espera', // espera | reparacion | domicilio | listos | entregado
-                fechaLlegada: '17/11/2026',
-                horaLlegada: '08:15 hrs',
-                horaFase: '08:15 hrs',
-                fechaEntrega: null,
-                mecanico: 'Carlos Mendoza'
-            },
-            {
-                id: 'ORD-102',
-                placa: 'P-314MNB',
-                vehiculo: 'Honda Civic 2019',
-                cliente: 'Diego Morales',
-                telefono: '42109934',
-                servicio: 'Cambio de kit de distribución y bomba de agua.',
-                costo: 1850.00,
-                isDomicilio: false,
-                status: 'reparacion',
-                fechaLlegada: '17/11/2026',
-                horaLlegada: '09:00 hrs',
-                horaFase: '09:30 hrs',
-                fechaEntrega: null,
-                mecanico: 'Carlos Mendoza'
-            },
-            {
-                id: 'ORD-103',
-                placa: 'P-771QWE',
-                vehiculo: 'Mitsubishi L200 2023',
-                cliente: 'Constructora El Roble',
-                telefono: '58901122',
-                servicio: 'Auxilio vial a domicilio: cambio de alternador y faja.',
-                costo: 1425.00,
-                isDomicilio: true,
-                status: 'domicilio',
-                fechaLlegada: '17/11/2026',
-                horaLlegada: '10:10 hrs',
-                horaFase: '10:15 hrs',
-                fechaEntrega: null,
-                mecanico: 'Carlos Mendoza'
-            },
-            {
-                id: 'ORD-104',
-                placa: 'P-509RTY',
-                vehiculo: 'Kia Sportage 2020',
-                cliente: 'Valeria Méndez',
-                telefono: '30445566',
-                servicio: 'Servicio mayor 60,000 km, alineación y balanceo.',
-                costo: 890.00,
-                isDomicilio: false,
-                status: 'listos',
-                fechaLlegada: '17/11/2026',
-                horaLlegada: '07:45 hrs',
-                horaFase: '11:40 hrs',
-                fechaEntrega: null,
-                mecanico: 'Carlos Mendoza'
-            },
-            {
-                id: 'ORD-105',
-                placa: 'P-998ASD',
-                vehiculo: 'Hyundai Tucson 2018',
-                cliente: 'Jorge Estrada',
-                telefono: '47889900',
-                servicio: 'Rescate a domicilio: reemplazo de sensor de cigüeñal.',
-                costo: 675.00,
-                isDomicilio: true,
-                status: 'listos',
-                fechaLlegada: '17/11/2026',
-                horaLlegada: '08:50 hrs',
-                horaFase: '12:10 hrs',
-                fechaEntrega: null,
-                mecanico: 'Carlos Mendoza'
-            },
-            {
-                id: 'ORD-100',
-                placa: 'P-456XYZ',
-                vehiculo: 'Toyota Hilux 2022',
-                cliente: 'Andrés Villagrán',
-                telefono: '50112233',
-                servicio: 'Cambio de aceite sintético 5W30 y pastillas de freno delanteras.',
-                costo: 450.00,
-                isDomicilio: true,
-                status: 'entregado',
-                fechaLlegada: '24/10/2026',
-                horaLlegada: '08:30 hrs',
-                horaFase: '14:15 hrs',
-                fechaEntrega: '24/10/2026 14:15 hrs',
-                mecanico: 'Carlos Mendoza'
-            }
-        ];
-
-        // Bitácora de Auditoría
-        let auditLogs = [
-            {
-                timestamp: '17/11/2026 08:15 hrs',
-                userRole: 'admin (Administrador)',
-                mechanic: 'Carlos Mendoza',
-                action: 'Ingreso inicial de vehículo P-892JKL (Mazda CX-5 2021) a En Espera.'
-            },
-            {
-                timestamp: '17/11/2026 10:10 hrs',
-                userRole: 'mecanico (Mecánico)',
-                mechanic: 'Carlos Mendoza',
-                action: 'Ingreso de servicio A Domicilio para placa P-771QWE (Mitsubishi L200 2023).'
-            }
-        ];
-
         // --- CREDENCIALES VÁLIDAS (P-00 LOGIN) ---
         const VALID_USERS = {
             'admin': { pass: '1234', role: 'Administrador' },
@@ -674,24 +712,30 @@
             'mecánico': { pass: '1234', role: 'Mecánico' }
         };
 
-        function fillCredentials(user, pass) {
-            document.getElementById('login-user').value = user;
-            document.getElementById('login-pass').value = pass;
-            document.getElementById('login-error').classList.add('hidden');
-        }
-
-        // Registrar evento en Auditoría
-        function logAudit(actionText) {
+        // Registrar evento en Auditoría con Firestore
+        async function logAudit(actionText) {
             const dt = getCurrentDateTime();
             const mechName = document.getElementById('mechanic-name-input').value.trim() || 'Sin asignar';
             const userLabel = currentUser ? `${currentUser.username} (${currentUser.role})` : 'Sistema';
-            auditLogs.unshift({
+            
+            const logEntry = {
                 timestamp: dt.full,
                 userRole: userLabel,
                 mechanic: mechName,
-                action: actionText
-            });
-            renderAudit();
+                action: actionText,
+                createdAt: Date.now()
+            };
+
+            if (db && auth && auth.currentUser) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'audit'), logEntry);
+                } catch (e) {
+                    console.error("Error saving audit to Firestore:", e);
+                }
+            } else {
+                auditLogs.unshift(logEntry);
+                renderAudit();
+            }
         }
 
         // Notificación Toast Inline
@@ -719,14 +763,12 @@
                 return;
             }
 
-            // Autenticación exitosa
             errorBox.classList.add('hidden');
             currentUser = {
                 username: userInput,
                 role: VALID_USERS[userInput].role
             };
 
-            // Actualizar badge de rol en el header
             const roleBadge = document.getElementById('header-role-badge');
             roleBadge.textContent = currentUser.role;
             if (currentUser.role === 'Administrador') {
@@ -735,7 +777,6 @@
                 roleBadge.className = 'px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-motorbase-success/20 text-motorbase-success border border-motorbase-success/40';
             }
 
-            // Transicionar de P-00 Login al App Shell
             document.getElementById('view-login').classList.add('hidden');
             document.getElementById('app-shell').classList.remove('hidden');
 
@@ -744,7 +785,6 @@
             renderAll();
         });
 
-        // Cierre de sesión obligatorio hacia P-00 Login
         document.getElementById('btn-logout').addEventListener('click', function() {
             logAudit(`Cierre de sesión de ${currentUser.username} (${currentUser.role}).`);
             currentUser = null;
@@ -755,18 +795,15 @@
             document.getElementById('view-login').classList.remove('hidden');
         });
 
-        // Cambio en el nombre visible del mecánico
         document.getElementById('mechanic-name-input').addEventListener('change', function() {
             const newName = this.value.trim() || 'Carlos Mendoza';
             this.value = newName;
             logAudit(`Actualización de nombre visible del mecánico a "${newName}".`);
             showToast(`Mecánico activo: ${newName}`);
-            renderAll();
         });
 
         // --- NAVEGACIÓN ENTRE PESTAÑAS ---
         function switchTab(tabName) {
-            activeTab = tabName;
             document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
             const target = document.getElementById(`tab-${tabName}`);
             if (target) target.classList.remove('hidden');
@@ -788,40 +825,59 @@
             btn.addEventListener('click', () => switchTab(btn.dataset.tab));
         });
 
-        // --- TRANSICIÓN DIRECTA INLINE (SIN MODALES NI CONFIRMACIONES) ---
-        function advanceOrder(orderId) {
+        // --- TRANSICIÓN DIRECTA INLINE CON FIRESTORE ---
+        window.advanceOrder = async function(orderId) {
             const order = orders.find(o => o.id === orderId);
             if (!order) return;
 
             const dt = getCurrentDateTime();
             const currentMech = document.getElementById('mechanic-name-input').value.trim() || order.mecanico;
-            order.mecanico = currentMech;
+            
+            let nextStatus = order.status;
+            let horaFase = order.horaFase;
+            let fechaEntrega = order.fechaEntrega;
 
-            let prevStatus = order.status;
             if (order.status === 'espera') {
-                order.status = 'reparacion';
-                order.horaFase = dt.time;
+                nextStatus = 'reparacion';
+                horaFase = dt.time;
                 logAudit(`Placa ${order.placa}: Avanzó de En Espera → En Reparación.`);
                 showToast(`${order.placa} pasó a En Reparación`);
             } else if (order.status === 'reparacion' || order.status === 'domicilio') {
-                order.status = 'listos';
-                order.horaFase = dt.time;
+                nextStatus = 'listos';
+                horaFase = dt.time;
                 logAudit(`Placa ${order.placa}: Avanzó a Listos para Entrega.`);
                 showToast(`${order.placa} está Listo para Entrega`);
             } else if (order.status === 'listos') {
-                order.status = 'entregado';
-                order.horaFase = dt.time;
-                order.fechaEntrega = dt.full;
+                nextStatus = 'entregado';
+                horaFase = dt.time;
+                fechaEntrega = dt.full;
                 logAudit(`Placa ${order.placa}: Orden ENTREGADA y archivada (${formatGTQ(order.costo)}).`);
                 showToast(`Orden ${order.placa} entregada y archivada`);
             }
 
-            renderAll();
-        }
+            if (db && auth && auth.currentUser) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId);
+                    await updateDoc(docRef, {
+                        status: nextStatus,
+                        horaFase,
+                        fechaEntrega,
+                        mecanico: currentMech
+                    });
+                } catch (e) {
+                    console.error("Error updating order in Firestore:", e);
+                }
+            } else {
+                order.status = nextStatus;
+                order.horaFase = horaFase;
+                order.fechaEntrega = fechaEntrega;
+                order.mecanico = currentMech;
+                renderAll();
+            }
+        };
 
         // --- RENDERIZADO DE TARJETAS DEL TABLERO ---
         function createBoardCardHTML(order) {
-            // Marco exterior distintivo en rojo intenso para A Domicilio
             const cardBorderClass = order.isDomicilio 
                 ? 'border-2 border-red-500 shadow-lg shadow-red-500/10' 
                 : 'border border-slate-800 hover:border-slate-700';
@@ -832,7 +888,6 @@
                    </span>`
                 : '';
 
-            // Botones de contacto directo en "Listos para Entrega"
             let contactButtonsHTML = '';
             if (order.status === 'listos') {
                 const cleanPhone = order.telefono.replace(/\D/g, '');
@@ -853,7 +908,6 @@
                 `;
             }
 
-            // Botón de acción directa según columna
             let actionBtnHTML = '';
             if (order.status === 'listos') {
                 actionBtnHTML = `
@@ -877,7 +931,6 @@
             return `
                 <article class="bg-motorbase-card ${cardBorderClass} rounded-2xl p-4 transition-all flex flex-col justify-between space-y-3">
                     <div>
-                        <!-- Cabecera Placa + Badge Domicilio -->
                         <div class="flex items-center justify-between gap-2 mb-1.5">
                             <span class="px-2.5 py-1 rounded-lg bg-motorbase-dark border border-slate-700 text-xs font-extrabold tracking-wider text-motorbase-cyan">
                                 ${order.placa}
@@ -885,21 +938,18 @@
                             ${domicilioBadge}
                         </div>
 
-                        <!-- Vehículo y Cliente -->
                         <h4 class="font-bold text-white text-base leading-snug">${order.vehiculo}</h4>
                         <p class="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
                             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i>
                             <span>${order.cliente} • ${order.telefono}</span>
                         </p>
 
-                        <!-- Descripción Servicio -->
                         <p class="text-xs text-slate-300 bg-motorbase-dark/80 border border-slate-800/90 rounded-xl p-2.5 mt-2.5 leading-relaxed">
                             ${order.servicio}
                         </p>
                     </div>
 
                     <div class="space-y-2 pt-1 border-t border-slate-800/80">
-                        <!-- Trazabilidad Temporal Obligatoria -->
                         <div class="text-[11px] text-slate-400 space-y-0.5">
                             <div class="flex items-center justify-between">
                                 <span>Llegada: <strong class="text-slate-200">${order.fechaLlegada}</strong></span>
@@ -910,7 +960,6 @@
                             </div>
                         </div>
 
-                        <!-- Monto en Quetzales -->
                         <div class="flex items-center justify-between pt-1">
                             <span class="text-xs text-slate-400">Estimado:</span>
                             <span class="font-bold text-white text-sm">${formatGTQ(order.costo)}</span>
@@ -932,14 +981,13 @@
             if (deliveredOrders.length === 0) {
                 container.innerHTML = `
                     <div class="bg-motorbase-card/50 border border-slate-800 rounded-2xl p-6 text-center text-sm text-slate-400">
-                        Aún no hay órdenes entregadas en el historial de hoy.
+                        Aún no hay órdenes entregadas en el historial.
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = deliveredOrders.map(order => {
-                // Badge verde ENTREGADO con etiqueta roja superpuesta en esquina inferior derecha si fue A Domicilio
                 const domicilioOverlay = order.isDomicilio
                     ? `<span class="mt-1 sm:mt-0 sm:-ml-2 px-2 py-0.5 rounded bg-motorbase-danger text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md border border-red-400/40">
                          A DOMICILIO
@@ -963,13 +1011,12 @@
                             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 pt-1">
                                 <span>Llegada: <strong class="text-slate-200">${order.fechaLlegada} ${order.horaLlegada}</strong></span>
                                 <span>|</span>
-                                <span>Entrega: <strong class="text-motorbase-success">${order.fechaEntrega}</strong></span>
+                                <span>Entrega: <strong class="text-motorbase-success">${order.fechaEntrega || 'Completado'}</strong></span>
                                 <span>|</span>
                                 <span>Costo Total: <strong class="font-bold text-white text-sm">${formatGTQ(order.costo)}</strong></span>
                             </div>
                         </div>
 
-                        <!-- Distintivo Verde ENTREGADO + Etiqueta Roja A DOMICILIO -->
                         <div class="relative inline-flex flex-col items-end self-start lg:self-center shrink-0">
                             <div class="px-4 py-2 rounded-xl bg-motorbase-success/15 border border-motorbase-success text-motorbase-success font-extrabold text-xs tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="check" class="w-4 h-4"></i>
@@ -982,7 +1029,6 @@
             }).join('');
         }
 
-        // --- RENDERIZADO COMPLETO DEL TABLERO ---
         function renderBoard() {
             const cols = {
                 espera: document.getElementById('col-espera'),
@@ -1012,8 +1058,8 @@
             renderDeliveredHistory();
         }
 
-        // --- REGISTRO DE NUEVO VEHÍCULO (+ REGISTRAR AUTO) ---
-        document.getElementById('form-register-car').addEventListener('submit', function(e) {
+        // --- REGISTRO DE NUEVO VEHÍCULO CON FIRESTORE ---
+        document.getElementById('form-register-car').addEventListener('submit', async function(e) {
             e.preventDefault();
             const placa = document.getElementById('reg-placa').value.trim().toUpperCase();
             const vehiculo = document.getElementById('reg-vehiculo').value.trim();
@@ -1027,7 +1073,6 @@
             const currentMech = document.getElementById('mechanic-name-input').value.trim() || 'Carlos Mendoza';
 
             const newOrder = {
-                id: 'ORD-' + Math.floor(100 + Math.random() * 900),
                 placa,
                 vehiculo,
                 cliente,
@@ -1040,20 +1085,30 @@
                 horaLlegada: dt.time,
                 horaFase: dt.time,
                 fechaEntrega: null,
-                mecanico: currentMech
+                mecanico: currentMech,
+                createdAt: Date.now()
             };
 
-            orders.unshift(newOrder);
+            if (db && auth && auth.currentUser) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), newOrder);
+                } catch (e) {
+                    console.error("Error adding order to Firestore:", e);
+                }
+            } else {
+                orders.unshift({ id: 'local-' + Date.now(), ...newOrder });
+                renderAll();
+            }
+
             logAudit(`Nuevo ingreso registrado: Placa ${placa} (${vehiculo}) - ${isDomicilio ? 'A Domicilio' : 'En Espera'} - ${formatGTQ(costo)}.`);
             
             this.reset();
             switchTab('tablero');
-            renderAll();
             showToast(`Vehículo ${placa} ingresado al Tablero`);
         });
 
         // --- HISTORIAL POR PLACA Y RE-INGRESO RÁPIDO ---
-        function renderQuickPlates() {
+        window.renderQuickPlates = function() {
             const uniquePlates = [...new Set(orders.map(o => o.placa))];
             const bar = document.getElementById('quick-plates-bar');
             bar.innerHTML = `<span class="text-slate-400">Placas registradas:</span>` + 
@@ -1063,9 +1118,9 @@
                         ${p}
                     </button>
                 `).join('');
-        }
+        };
 
-        function searchPlate(plateQuery) {
+        window.searchPlate = function(plateQuery) {
             const query = (plateQuery || document.getElementById('search-plate-input').value).trim().toUpperCase();
             document.getElementById('search-plate-input').value = query;
             const resultContainer = document.getElementById('plate-history-result');
@@ -1094,12 +1149,10 @@
                 return;
             }
 
-            // Tomar los datos base del registro más reciente
             const latest = matchingOrders[0];
 
             resultContainer.innerHTML = `
                 <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-6 space-y-5">
-                    <!-- Cabecera del Expediente + Botón de Re-ingreso Rápido -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-800">
                         <div>
                             <div class="flex items-center gap-2.5">
@@ -1120,7 +1173,6 @@
                         </button>
                     </div>
 
-                    <!-- Formulario Inline de Re-ingreso Rápido (Pre-llenado automático) -->
                     <div id="quick-reentry-box" class="hidden bg-motorbase-dark border border-motorbase-cyan/50 rounded-2xl p-5 space-y-4">
                         <div class="flex items-center justify-between">
                             <h4 class="font-bold text-motorbase-cyan text-sm uppercase tracking-wider">Re-ingreso Rápido al Taller (Datos Pre-llenados)</h4>
@@ -1153,7 +1205,6 @@
                         </form>
                     </div>
 
-                    <!-- Listado de Órdenes Históricas de esta Placa -->
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Historial de Servicios (${matchingOrders.length})</h4>
                         ${matchingOrders.map(ord => `
@@ -1177,14 +1228,14 @@
                 </div>
             `;
             lucide.createIcons();
-        }
+        };
 
-        function toggleQuickReentryForm() {
+        window.toggleQuickReentryForm = function() {
             const box = document.getElementById('quick-reentry-box');
             if (box) box.classList.toggle('hidden');
-        }
+        };
 
-        function submitQuickReentry(e, placa) {
+        window.submitQuickReentry = async function(e, placa) {
             e.preventDefault();
             const baseOrder = orders.find(o => o.placa === placa);
             if (!baseOrder) return;
@@ -1196,7 +1247,6 @@
             const currentMech = document.getElementById('mechanic-name-input').value.trim() || baseOrder.mecanico;
 
             const newOrder = {
-                id: 'ORD-' + Math.floor(100 + Math.random() * 900),
                 placa: baseOrder.placa,
                 vehiculo: baseOrder.vehiculo,
                 cliente: baseOrder.cliente,
@@ -1209,19 +1259,28 @@
                 horaLlegada: dt.time,
                 horaFase: dt.time,
                 fechaEntrega: null,
-                mecanico: currentMech
+                mecanico: currentMech,
+                createdAt: Date.now()
             };
 
-            orders.unshift(newOrder);
+            if (db && auth && auth.currentUser) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), newOrder);
+                } catch (e) {
+                    console.error("Error adding reentry order:", e);
+                }
+            } else {
+                orders.unshift({ id: 'local-' + Date.now(), ...newOrder });
+            }
+
             logAudit(`Re-ingreso rápido desde Historial: Placa ${baseOrder.placa} (${isDom ? 'A Domicilio' : 'En Espera'}) - ${formatGTQ(nuevoCosto)}.`);
             switchTab('tablero');
-            renderAll();
             showToast(`Nueva orden creada para ${baseOrder.placa}`);
-        }
+        };
 
-        document.getElementById('btn-search-plate').addEventListener('click', () => searchPlate());
+        document.getElementById('btn-search-plate').addEventListener('click', () => window.searchPlate());
         document.getElementById('search-plate-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') searchPlate();
+            if (e.key === 'Enter') window.searchPlate();
         });
 
         // --- RENDERIZADO DE AUDITORÍA ---
@@ -1270,7 +1329,6 @@
             `).join('');
         }
 
-        // --- RENDERIZADO MAESTRO ---
         function renderAll() {
             renderBoard();
             renderAudit();
@@ -1279,7 +1337,6 @@
             lucide.createIcons();
         }
 
-        // Inicializar iconos en carga inicial (P-00 Login)
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
         });
