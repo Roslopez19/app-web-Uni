@@ -1,6 +1,85 @@
-<div class="flex flex-col items-center justify-center mb-6">
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="logo-motorbase.png" alt="Logotipo MOTORBASE" class="w-12 h-12 rounded-xl object-contain">
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOTORBASE — Sistema Rápido de Taller</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Configuración Oficial de Paleta Tailwind CSS MOTORBASE -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'motorbase-dark': '#070b14',
+                        'motorbase-card': '#0f172a',
+                        'motorbase-blue': '#0066ff',
+                        'motorbase-cyan': '#00c6ff',
+                        'motorbase-success': '#10b981',
+                        'motorbase-danger': '#ef4444',
+                        'motorbase-warning': '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #070b14;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Scrollbar personalizado para Dark Mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        /* Ergonomía táctil Touch-First */
+        .touch-target {
+            min-height: 52px;
+        }
+        .touch-btn-sm {
+            min-height: 44px;
+        }
+    </style>
+</head>
+<body class="bg-motorbase-dark text-slate-100 min-h-screen flex flex-col antialiased selection:bg-motorbase-blue selection:text-white">
+
+    <!-- ===================================================================== -->
+    <!-- PANTALLA INICIAL OBLIGATORIA: P-00 LOGIN                              -->
+    <!-- ===================================================================== -->
+    <section id="view-login" class="flex-1 flex items-center justify-center p-4 min-h-screen bg-motorbase-dark">
+        <div class="w-full max-w-md bg-motorbase-card border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl">
+            
+            <!-- Logotipo Institucional con Fallback SVG -->
+            <div class="flex flex-col items-center justify-center mb-6">
+                <img src="img/Proyecto app programación parcial (1).png" alt="MOTORBASE Logo" class="h-12 w-auto mb-3 object-contain" 
+                     onerror="this.style.display='none'; document.getElementById('login-logo-fallback').classList.remove('hidden');">
+                <div id="login-logo-fallback" class="hidden flex items-center gap-2.5 mb-3">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-motorbase-blue to-motorbase-cyan flex items-center justify-center shadow-lg shadow-motorbase-blue/20">
+                        <i data-lucide="wrench" class="w-6 h-6 text-white"></i>
+                    </div>
                     <span class="text-2xl font-extrabold tracking-tight text-white">MOTOR<span class="text-motorbase-cyan">BASE</span></span>
                 </div>
                 <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-900 border border-slate-800 text-motorbase-cyan tracking-wider uppercase">
@@ -12,3 +91,1198 @@
                 <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Acceso al Taller</h1>
                 <p class="text-sm text-slate-400 mt-1">Acceso exclusivo para Administrador y Mecánico</p>
             </div>
+
+            <!-- Mensaje de Error de Validación -->
+            <div id="login-error" class="hidden mb-5 p-3.5 rounded-xl bg-red-500/10 border border-red-500 text-red-500 text-sm font-semibold flex items-center gap-2.5">
+                <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
+                <span>Credenciales inválidas</span>
+            </div>
+
+            <!-- Formulario de Autenticación Touch-First (52px) -->
+            <form id="login-form" class="space-y-4" novalidate>
+                <div>
+                    <label for="login-user" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                        Usuario (Admin / Mecánico)
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <input type="text" id="login-user" autocomplete="off" placeholder="Ej. admin o mecanico"
+                               class="touch-target w-full pl-11 pr-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan focus:ring-1 focus:ring-motorbase-cyan transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="login-pass" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                        Contraseña o PIN
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </div>
+                        <input type="password" id="login-pass" placeholder="••••••"
+                               class="touch-target w-full pl-11 pr-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan focus:ring-1 focus:ring-motorbase-cyan transition">
+                    </div>
+                </div>
+
+                <button type="submit" 
+                        class="touch-target w-full mt-2 bg-motorbase-blue hover:bg-blue-600 active:scale-[0.99] text-white font-bold rounded-xl shadow-lg shadow-motorbase-blue/25 transition flex items-center justify-center gap-2 text-base">
+                    <span>Ingresar</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- APLICACIÓN PRINCIPAL PROTEGIDA (POST-LOGIN P-00)                      -->
+    <!-- ===================================================================== -->
+    <div id="app-shell" class="hidden flex-1 flex flex-col min-h-screen">
+        
+        <!-- HEADER FIJO SUPERIOR -->
+        <header class="sticky top-0 z-30 bg-motorbase-card/95 backdrop-blur border-b border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    
+                    <!-- Logotipo Oficial y Rol -->
+                    <div class="flex items-center gap-3">
+                        <img src="img/Proyecto app programación parcial (1).png" alt="MOTORBASE" class="h-10 w-auto object-contain"
+                             onerror="this.style.display='none'; document.getElementById('header-logo-fallback').classList.remove('hidden');">
+                        <div id="header-logo-fallback" class="hidden flex items-center gap-2">
+                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-motorbase-blue to-motorbase-cyan flex items-center justify-center">
+                                <i data-lucide="wrench" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <span class="text-xl font-extrabold tracking-tight text-white">MOTOR<span class="text-motorbase-cyan">BASE</span></span>
+                        </div>
+                        <span id="header-role-badge" class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-motorbase-blue/20 text-motorbase-cyan border border-motorbase-blue/40">
+                            Rol
+                        </span>
+                    </div>
+
+                    <!-- Configuración Operativa: Nombre Visible del Mecánico + Botón Salir -->
+                    <div class="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap w-full sm:w-auto justify-between sm:justify-end">
+                        <div class="flex items-center gap-2 bg-motorbase-dark border border-slate-800 rounded-xl px-3 py-1.5 flex-1 sm:flex-initial">
+                            <i data-lucide="hard-hat" class="w-4 h-4 text-motorbase-warning shrink-0"></i>
+                            <label for="mechanic-name-input" class="text-xs text-slate-400 whitespace-nowrap hidden md:inline">Mecánico:</label>
+                            <input type="text" id="mechanic-name-input" value="Carlos Mendoza" title="Personalizar nombre visible del mecánico"
+                                   class="bg-transparent text-sm font-semibold text-white focus:outline-none w-full sm:w-40 border-b border-transparent focus:border-motorbase-cyan">
+                        </div>
+
+                        <button type="button" id="btn-logout" 
+                                class="touch-btn-sm px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 border border-slate-700 text-slate-200 text-sm font-semibold transition flex items-center gap-2 shrink-0">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            <span>Salir</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PESTAÑAS TÁCTILES DE NAVEGACIÓN -->
+                <nav class="flex items-center gap-2 overflow-x-auto pt-3 mt-3 border-t border-slate-800/80 no-scrollbar">
+                    <button type="button" data-tab="resumen" class="nav-tab touch-btn-sm px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Resumen</span>
+                    </button>
+                    <button type="button" data-tab="tablero" class="nav-tab touch-btn-sm px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                        <i data-lucide="kanban" class="w-4 h-4"></i>
+                        <span>Tablero</span>
+                    </button>
+                    <button type="button" data-tab="registrar" class="nav-tab touch-btn-sm px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>+ Registrar Auto</span>
+                    </button>
+                    <button type="button" data-tab="historial" class="nav-tab touch-btn-sm px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Historial por Placa</span>
+                    </button>
+                    <button type="button" data-tab="auditoria" class="nav-tab touch-btn-sm px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>Auditoría</span>
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- NOTIFICACIÓN TOAST INLINE (SIN MODALES NI ALERTS) -->
+        <div id="toast-banner" class="hidden fixed bottom-4 right-4 z-50 max-w-sm bg-motorbase-card border border-motorbase-cyan text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-motorbase-cyan shrink-0"></i>
+            <span id="toast-message" class="text-sm font-medium">Acción completada</span>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL DE VISTAS -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+            <!-- ============================================================= -->
+            <!-- VISTA 1: RESUMEN OPERATIVO                                    -->
+            <!-- ============================================================= -->
+            <section id="tab-resumen" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Resumen Operativo del Taller</h2>
+                        <p class="text-sm text-slate-400">Indicadores en tiempo real y facturación en Quetzales (GTQ)</p>
+                    </div>
+                    <button type="button" onclick="switchTab('tablero')" class="touch-btn-sm px-4 py-2 rounded-xl bg-motorbase-blue hover:bg-blue-600 text-white text-sm font-semibold flex items-center gap-2 self-start sm:self-auto">
+                        <span>Ir al Tablero</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- KPIs Principales -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Vehículos Activos</span>
+                            <div class="p-2 rounded-lg bg-motorbase-blue/15 text-motorbase-cyan">
+                                <i data-lucide="car" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpi-activos" class="text-3xl font-extrabold text-white">0</p>
+                        <p class="text-xs text-slate-400 mt-1">En Espera, Reparación, Domicilio y Listos</p>
+                    </div>
+
+                    <div class="bg-motorbase-card border border-red-500/50 rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-red-400">Servicios A Domicilio</span>
+                            <div class="p-2 rounded-lg bg-red-500/15 text-motorbase-danger">
+                                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpi-domicilio" class="text-3xl font-extrabold text-white">0</p>
+                        <p class="text-xs text-red-400/90 mt-1">Unidades móviles activas con prioridad</p>
+                    </div>
+
+                    <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Listos para Entrega</span>
+                            <div class="p-2 rounded-lg bg-motorbase-warning/15 text-motorbase-warning">
+                                <i data-lucide="bell-ring" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpi-listos" class="text-3xl font-extrabold text-white">0</p>
+                        <p class="text-xs text-slate-400 mt-1">Pendientes de retiro / contacto cliente</p>
+                    </div>
+
+                    <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Ingresos Entregados</span>
+                            <div class="p-2 rounded-lg bg-motorbase-success/15 text-motorbase-success">
+                                <i data-lucide="banknote" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpi-ingresos" class="text-2xl sm:text-3xl font-extrabold text-white">Q 0.00 GTQ</p>
+                        <p id="kpi-entregados-count" class="text-xs text-motorbase-success mt-1">0 órdenes finalizadas</p>
+                    </div>
+                </div>
+
+                <!-- Distribución por Estado -->
+                <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-5">
+                    <h3 class="text-base font-bold text-white mb-4">Estado Actual de la Mesa de Trabajo</h3>
+                    <div id="resumen-desglose" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================= -->
+            <!-- VISTA 2: TABLERO KANBAN (4 COLUMNAS) + HISTÓRICO INFERIOR     -->
+            <!-- ============================================================= -->
+            <section id="tab-tablero" class="tab-content space-y-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Tablero Operativo en Tiempo Real</h2>
+                        <p class="text-sm text-slate-400">Avance directo en un toque • Tarjetas <span class="text-motorbase-danger font-semibold">A Domicilio</span> resaltadas en rojo</p>
+                    </div>
+                    <button type="button" onclick="switchTab('registrar')" class="touch-btn-sm px-4 py-2.5 rounded-xl bg-motorbase-blue hover:bg-blue-600 text-white text-sm font-bold flex items-center gap-2 shadow-lg shadow-motorbase-blue/20 self-start sm:self-auto">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Nuevo Ingreso</span>
+                    </button>
+                </div>
+
+                <!-- 4 COLUMNAS DEL TABLERO -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+                    
+                    <!-- Columna 1: En Espera -->
+                    <div class="bg-motorbase-card/60 border border-slate-800 rounded-2xl p-3.5 flex flex-col gap-3">
+                        <div class="flex items-center justify-between px-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                                <h3 class="font-bold text-sm uppercase tracking-wider text-slate-200">En Espera</h3>
+                            </div>
+                            <span id="count-espera" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-300">0</span>
+                        </div>
+                        <div id="col-espera" class="space-y-3 min-h-[120px]"></div>
+                    </div>
+
+                    <!-- Columna 2: En Reparación -->
+                    <div class="bg-motorbase-card/60 border border-slate-800 rounded-2xl p-3.5 flex flex-col gap-3">
+                        <div class="flex items-center justify-between px-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-motorbase-blue"></span>
+                                <h3 class="font-bold text-sm uppercase tracking-wider text-slate-200">En Reparación</h3>
+                            </div>
+                            <span id="count-reparacion" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-motorbase-blue/20 text-motorbase-cyan">0</span>
+                        </div>
+                        <div id="col-reparacion" class="space-y-3 min-h-[120px]"></div>
+                    </div>
+
+                    <!-- Columna 3: A Domicilio -->
+                    <div class="bg-motorbase-card/60 border border-red-500/40 rounded-2xl p-3.5 flex flex-col gap-3">
+                        <div class="flex items-center justify-between px-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-motorbase-danger animate-pulse"></span>
+                                <h3 class="font-bold text-sm uppercase tracking-wider text-red-400">A Domicilio</h3>
+                            </div>
+                            <span id="count-domicilio" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500/20 text-red-400">0</span>
+                        </div>
+                        <div id="col-domicilio" class="space-y-3 min-h-[120px]"></div>
+                    </div>
+
+                    <!-- Columna 4: Listos para Entrega -->
+                    <div class="bg-motorbase-card/60 border border-slate-800 rounded-2xl p-3.5 flex flex-col gap-3">
+                        <div class="flex items-center justify-between px-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-motorbase-warning"></span>
+                                <h3 class="font-bold text-sm uppercase tracking-wider text-slate-200">Listos para Entrega</h3>
+                            </div>
+                            <span id="count-listos" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-motorbase-warning/20 text-motorbase-warning">0</span>
+                        </div>
+                        <div id="col-listos" class="space-y-3 min-h-[120px]"></div>
+                    </div>
+
+                </div>
+
+                <!-- SECCIÓN INFERIOR DEL TABLERO: HISTÓRICO DE ÓRDENES ENTREGADAS -->
+                <div class="pt-4 border-t border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-xl bg-motorbase-success/15 text-motorbase-success">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white uppercase tracking-wide">Histórico de Órdenes Entregadas</h3>
+                                <p class="text-xs text-slate-400">Archivo inmediato de servicios cerrados y cobrados en Quetzales (GTQ)</p>
+                            </div>
+                        </div>
+                        <span id="count-entregados" class="px-3 py-1 rounded-full text-xs font-bold bg-motorbase-success/20 text-motorbase-success border border-motorbase-success/30">
+                            0 Entregados
+                        </span>
+                    </div>
+
+                    <div id="delivered-history-list" class="space-y-3">
+                        <!-- Tarjetas entregadas renderizadas dinámicamente -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================= -->
+            <!-- VISTA 3: + REGISTRAR AUTO                                     -->
+            <!-- ============================================================= -->
+            <section id="tab-registrar" class="tab-content hidden max-w-2xl mx-auto">
+                <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+                    <div class="mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Registrar Ingreso de Vehículo</h2>
+                        <p class="text-sm text-slate-400 mt-1">Complete los datos para generar la orden en el Tablero</p>
+                    </div>
+
+                    <form id="form-register-car" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Placa del Vehículo *</label>
+                                <input type="text" id="reg-placa" required placeholder="Ej. P-456XYZ"
+                                       class="touch-target w-full px-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white uppercase font-bold placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Marca, Modelo y Año *</label>
+                                <input type="text" id="reg-vehiculo" required placeholder="Ej. Toyota Hilux 2022"
+                                       class="touch-target w-full px-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nombre del Cliente *</label>
+                                <input type="text" id="reg-cliente" required placeholder="Ej. Roberto Gómez"
+                                       class="touch-target w-full px-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Teléfono WhatsApp (Guatemala) *</label>
+                                <input type="tel" id="reg-telefono" required placeholder="Ej. 55123456"
+                                       class="touch-target w-full px-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Falla Reportada / Servicio a Realizar *</label>
+                            <textarea id="reg-servicio" required rows="3" placeholder="Ej. Cambio de aceite sintético 5W30 y revisión de frenos delanteros."
+                                      class="w-full p-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Costo Estimado (Quetzales - Q) *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center font-bold text-motorbase-cyan">Q</span>
+                                    <input type="number" id="reg-costo" required min="0" step="0.01" placeholder="450.00"
+                                           class="touch-target w-full pl-9 pr-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white font-bold placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Modalidad de Atención</label>
+                                <label class="touch-target flex items-center justify-between px-4 bg-motorbase-dark border border-slate-800 rounded-xl cursor-pointer hover:border-red-500/60 transition">
+                                    <span class="text-sm font-semibold text-white flex items-center gap-2">
+                                        <i data-lucide="map-pin" class="w-4 h-4 text-motorbase-danger"></i>
+                                        <span>¿Servicio A Domicilio?</span>
+                                    </span>
+                                    <input type="checkbox" id="reg-domicilio" class="w-5 h-5 accent-red-500 rounded cursor-pointer">
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 flex flex-col sm:flex-row gap-3">
+                            <button type="submit" class="touch-target flex-1 bg-motorbase-blue hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-motorbase-blue/25 transition flex items-center justify-center gap-2">
+                                <i data-lucide="save" class="w-5 h-5"></i>
+                                <span>Guardar e Ingresar al Tablero</span>
+                            </button>
+                            <button type="button" onclick="switchTab('tablero')" class="touch-target px-6 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl transition">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ============================================================= -->
+            <!-- VISTA 4: HISTORIAL POR PLACA Y RE-INGRESO RÁPIDO              -->
+            <!-- ============================================================= -->
+            <section id="tab-historial" class="tab-content hidden space-y-6">
+                <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-6">
+                    <h2 class="text-xl sm:text-2xl font-bold text-white">Historial por Placa y Re-ingreso Rápido</h2>
+                    <p class="text-sm text-slate-400 mt-1">Consulte el expediente de un vehículo y abra una nueva orden sin reescribir datos del cliente</p>
+
+                    <div class="mt-5 flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-1">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                            </div>
+                            <input type="text" id="search-plate-input" placeholder="Ingrese número de placa (Ej. P-456XYZ)..."
+                                   class="touch-target w-full pl-11 pr-4 bg-motorbase-dark border border-slate-800 rounded-xl text-white uppercase font-bold placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                        </div>
+                        <button type="button" id="btn-search-plate" class="touch-target px-6 bg-motorbase-blue hover:bg-blue-600 text-white font-bold rounded-xl transition flex items-center justify-center gap-2">
+                            <span>Buscar Expediente</span>
+                        </button>
+                    </div>
+
+                    <!-- Placas sugeridas para consulta rápida -->
+                    <div id="quick-plates-bar" class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                        <span class="text-slate-400">Placas registradas:</span>
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Contenedor de Resultados del Expediente -->
+                <div id="plate-history-result" class="space-y-4"></div>
+            </section>
+
+            <!-- ============================================================= -->
+            <!-- VISTA 5: AUDITORÍA                                            -->
+            <!-- ============================================================= -->
+            <section id="tab-auditoria" class="tab-content hidden space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Bitácora de Auditoría</h2>
+                        <p class="text-sm text-slate-400">Registro cronológico de Usuario/Rol, Mecánico asignado y acciones ejecutadas</p>
+                    </div>
+                    <span id="audit-count-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-motorbase-cyan self-start sm:self-auto">
+                        0 registros
+                    </span>
+                </div>
+
+                <div class="bg-motorbase-card border border-slate-800 rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-800 bg-motorbase-dark/60 text-xs font-bold uppercase tracking-wider text-slate-400">
+                                    <th class="py-3.5 px-4">Fecha / Hora</th>
+                                    <th class="py-3.5 px-4">Usuario / Rol</th>
+                                    <th class="py-3.5 px-4">Mecánico</th>
+                                    <th class="py-3.5 px-4">Acción Realizada</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-table-body" class="divide-y divide-slate-800/80 text-sm">
+                                <!-- Filas dinámicas -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- LÓGICA DE APLICACIÓN MOTORBASE                                        -->
+    <!-- ===================================================================== -->
+    <script>
+        // --- ESTADO GLOBAL DE LA APLICACIÓN ---
+        let currentUser = null; // { username, role }
+        let activeTab = 'tablero';
+        let activeReentryPlate = null;
+
+        // Formateador oficial de moneda local (Quetzales - GTQ)
+        function formatGTQ(amount) {
+            const num = parseFloat(amount) || 0;
+            return `Q ${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} GTQ`;
+        }
+
+        // Utilidad de fecha y hora actual (DD/MM/YYYY y HH:MM hrs)
+        function getCurrentDateTime() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            return {
+                date: `${day}/${month}/${year}`,
+                time: `${hours}:${mins} hrs`,
+                full: `${day}/${month}/${year} ${hours}:${mins} hrs`
+            };
+        }
+
+        // --- DATOS INICIALES PRECARGADOS (MOCK REALISTA) ---
+        let orders = [
+            {
+                id: 'ORD-101',
+                placa: 'P-892JKL',
+                vehiculo: 'Mazda CX-5 2021',
+                cliente: 'Sofía Castellanos',
+                telefono: '55128890',
+                servicio: 'Diagnóstico de sistema eléctrico y cambio de batería.',
+                costo: 1150.00,
+                isDomicilio: false,
+                status: 'espera', // espera | reparacion | domicilio | listos | entregado
+                fechaLlegada: '17/11/2026',
+                horaLlegada: '08:15 hrs',
+                horaFase: '08:15 hrs',
+                fechaEntrega: null,
+                mecanico: 'Carlos Mendoza'
+            },
+            {
+                id: 'ORD-102',
+                placa: 'P-314MNB',
+                vehiculo: 'Honda Civic 2019',
+                cliente: 'Diego Morales',
+                telefono: '42109934',
+                servicio: 'Cambio de kit de distribución y bomba de agua.',
+                costo: 1850.00,
+                isDomicilio: false,
+                status: 'reparacion',
+                fechaLlegada: '17/11/2026',
+                horaLlegada: '09:00 hrs',
+                horaFase: '09:30 hrs',
+                fechaEntrega: null,
+                mecanico: 'Carlos Mendoza'
+            },
+            {
+                id: 'ORD-103',
+                placa: 'P-771QWE',
+                vehiculo: 'Mitsubishi L200 2023',
+                cliente: 'Constructora El Roble',
+                telefono: '58901122',
+                servicio: 'Auxilio vial a domicilio: cambio de alternador y faja.',
+                costo: 1425.00,
+                isDomicilio: true,
+                status: 'domicilio',
+                fechaLlegada: '17/11/2026',
+                horaLlegada: '10:10 hrs',
+                horaFase: '10:15 hrs',
+                fechaEntrega: null,
+                mecanico: 'Carlos Mendoza'
+            },
+            {
+                id: 'ORD-104',
+                placa: 'P-509RTY',
+                vehiculo: 'Kia Sportage 2020',
+                cliente: 'Valeria Méndez',
+                telefono: '30445566',
+                servicio: 'Servicio mayor 60,000 km, alineación y balanceo.',
+                costo: 890.00,
+                isDomicilio: false,
+                status: 'listos',
+                fechaLlegada: '17/11/2026',
+                horaLlegada: '07:45 hrs',
+                horaFase: '11:40 hrs',
+                fechaEntrega: null,
+                mecanico: 'Carlos Mendoza'
+            },
+            {
+                id: 'ORD-105',
+                placa: 'P-998ASD',
+                vehiculo: 'Hyundai Tucson 2018',
+                cliente: 'Jorge Estrada',
+                telefono: '47889900',
+                servicio: 'Rescate a domicilio: reemplazo de sensor de cigüeñal.',
+                costo: 675.00,
+                isDomicilio: true,
+                status: 'listos',
+                fechaLlegada: '17/11/2026',
+                horaLlegada: '08:50 hrs',
+                horaFase: '12:10 hrs',
+                fechaEntrega: null,
+                mecanico: 'Carlos Mendoza'
+            },
+            {
+                id: 'ORD-100',
+                placa: 'P-456XYZ',
+                vehiculo: 'Toyota Hilux 2022',
+                cliente: 'Andrés Villagrán',
+                telefono: '50112233',
+                servicio: 'Cambio de aceite sintético 5W30 y pastillas de freno delanteras.',
+                costo: 450.00,
+                isDomicilio: true,
+                status: 'entregado',
+                fechaLlegada: '24/10/2026',
+                horaLlegada: '08:30 hrs',
+                horaFase: '14:15 hrs',
+                fechaEntrega: '24/10/2026 14:15 hrs',
+                mecanico: 'Carlos Mendoza'
+            }
+        ];
+
+        // Bitácora de Auditoría
+        let auditLogs = [
+            {
+                timestamp: '17/11/2026 08:15 hrs',
+                userRole: 'admin (Administrador)',
+                mechanic: 'Carlos Mendoza',
+                action: 'Ingreso inicial de vehículo P-892JKL (Mazda CX-5 2021) a En Espera.'
+            },
+            {
+                timestamp: '17/11/2026 10:10 hrs',
+                userRole: 'mecanico (Mecánico)',
+                mechanic: 'Carlos Mendoza',
+                action: 'Ingreso de servicio A Domicilio para placa P-771QWE (Mitsubishi L200 2023).'
+            }
+        ];
+
+        // --- CREDENCIALES VÁLIDAS (P-00 LOGIN) ---
+        const VALID_USERS = {
+            'admin': { pass: '1234', role: 'Administrador' },
+            'administrador': { pass: '1234', role: 'Administrador' },
+            'mecanico': { pass: '1234', role: 'Mecánico' },
+            'mecánico': { pass: '1234', role: 'Mecánico' }
+        };
+
+        function fillCredentials(user, pass) {
+            document.getElementById('login-user').value = user;
+            document.getElementById('login-pass').value = pass;
+            document.getElementById('login-error').classList.add('hidden');
+        }
+
+        // Registrar evento en Auditoría
+        function logAudit(actionText) {
+            const dt = getCurrentDateTime();
+            const mechName = document.getElementById('mechanic-name-input').value.trim() || 'Sin asignar';
+            const userLabel = currentUser ? `${currentUser.username} (${currentUser.role})` : 'Sistema';
+            auditLogs.unshift({
+                timestamp: dt.full,
+                userRole: userLabel,
+                mechanic: mechName,
+                action: actionText
+            });
+            renderAudit();
+        }
+
+        // Notificación Toast Inline
+        let toastTimeout = null;
+        function showToast(msg) {
+            const banner = document.getElementById('toast-banner');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.textContent = msg;
+            banner.classList.remove('hidden');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                banner.classList.add('hidden');
+            }, 3200);
+        }
+
+        // --- MANEJO DE AUTENTICACIÓN P-00 LOGIN ---
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('login-user').value.trim().toLowerCase();
+            const passInput = document.getElementById('login-pass').value.trim();
+            const errorBox = document.getElementById('login-error');
+
+            if (!userInput || !passInput || !VALID_USERS[userInput] || VALID_USERS[userInput].pass !== passInput) {
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            // Autenticación exitosa
+            errorBox.classList.add('hidden');
+            currentUser = {
+                username: userInput,
+                role: VALID_USERS[userInput].role
+            };
+
+            // Actualizar badge de rol en el header
+            const roleBadge = document.getElementById('header-role-badge');
+            roleBadge.textContent = currentUser.role;
+            if (currentUser.role === 'Administrador') {
+                roleBadge.className = 'px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-motorbase-blue/20 text-motorbase-cyan border border-motorbase-blue/40';
+            } else {
+                roleBadge.className = 'px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-motorbase-success/20 text-motorbase-success border border-motorbase-success/40';
+            }
+
+            // Transicionar de P-00 Login al App Shell
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+
+            logAudit(`Inicio de sesión exitoso en P-00 Login como ${currentUser.role}.`);
+            switchTab('tablero');
+            renderAll();
+        });
+
+        // Cierre de sesión obligatorio hacia P-00 Login
+        document.getElementById('btn-logout').addEventListener('click', function() {
+            logAudit(`Cierre de sesión de ${currentUser.username} (${currentUser.role}).`);
+            currentUser = null;
+            document.getElementById('login-user').value = '';
+            document.getElementById('login-pass').value = '';
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('app-shell').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+        });
+
+        // Cambio en el nombre visible del mecánico
+        document.getElementById('mechanic-name-input').addEventListener('change', function() {
+            const newName = this.value.trim() || 'Carlos Mendoza';
+            this.value = newName;
+            logAudit(`Actualización de nombre visible del mecánico a "${newName}".`);
+            showToast(`Mecánico activo: ${newName}`);
+            renderAll();
+        });
+
+        // --- NAVEGACIÓN ENTRE PESTAÑAS ---
+        function switchTab(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById(`tab-${tabName}`);
+            if (target) target.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                if (btn.dataset.tab === tabName) {
+                    btn.className = 'nav-tab touch-btn-sm px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap flex items-center gap-2 transition bg-motorbase-blue text-white shadow-md shadow-motorbase-blue/25';
+                } else {
+                    btn.className = 'nav-tab touch-btn-sm px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap flex items-center gap-2 transition bg-motorbase-dark/70 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800';
+                }
+            });
+
+            if (tabName === 'historial') renderQuickPlates();
+            if (tabName === 'resumen') renderResumen();
+            lucide.createIcons();
+        }
+
+        document.querySelectorAll('.nav-tab').forEach(btn => {
+            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+        });
+
+        // --- TRANSICIÓN DIRECTA INLINE (SIN MODALES NI CONFIRMACIONES) ---
+        function advanceOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const dt = getCurrentDateTime();
+            const currentMech = document.getElementById('mechanic-name-input').value.trim() || order.mecanico;
+            order.mecanico = currentMech;
+
+            let prevStatus = order.status;
+            if (order.status === 'espera') {
+                order.status = 'reparacion';
+                order.horaFase = dt.time;
+                logAudit(`Placa ${order.placa}: Avanzó de En Espera → En Reparación.`);
+                showToast(`${order.placa} pasó a En Reparación`);
+            } else if (order.status === 'reparacion' || order.status === 'domicilio') {
+                order.status = 'listos';
+                order.horaFase = dt.time;
+                logAudit(`Placa ${order.placa}: Avanzó a Listos para Entrega.`);
+                showToast(`${order.placa} está Listo para Entrega`);
+            } else if (order.status === 'listos') {
+                order.status = 'entregado';
+                order.horaFase = dt.time;
+                order.fechaEntrega = dt.full;
+                logAudit(`Placa ${order.placa}: Orden ENTREGADA y archivada (${formatGTQ(order.costo)}).`);
+                showToast(`Orden ${order.placa} entregada y archivada`);
+            }
+
+            renderAll();
+        }
+
+        // --- RENDERIZADO DE TARJETAS DEL TABLERO ---
+        function createBoardCardHTML(order) {
+            // Marco exterior distintivo en rojo intenso para A Domicilio
+            const cardBorderClass = order.isDomicilio 
+                ? 'border-2 border-red-500 shadow-lg shadow-red-500/10' 
+                : 'border border-slate-800 hover:border-slate-700';
+
+            const domicilioBadge = order.isDomicilio
+                ? `<span class="px-2 py-0.5 rounded text-[11px] font-extrabold uppercase tracking-wider bg-motorbase-danger text-white flex items-center gap-1">
+                     <i data-lucide="map-pin" class="w-3 h-3"></i> A Domicilio
+                   </span>`
+                : '';
+
+            // Botones de contacto directo en "Listos para Entrega"
+            let contactButtonsHTML = '';
+            if (order.status === 'listos') {
+                const cleanPhone = order.telefono.replace(/\D/g, '');
+                const waText = encodeURIComponent(`Hola ${order.cliente}, le saludamos de MOTORBASE. Su vehículo ${order.vehiculo} con placa ${order.placa} ya está LISTO PARA ENTREGA. Total del servicio: ${formatGTQ(order.costo)}.`);
+                contactButtonsHTML = `
+                    <div class="grid grid-cols-2 gap-2 pt-2">
+                        <a href="tel:+502${cleanPhone}" 
+                           class="touch-btn-sm px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                            <i data-lucide="phone" class="w-3.5 h-3.5 text-motorbase-cyan"></i>
+                            <span>Llamar</span>
+                        </a>
+                        <a href="https://wa.me/502${cleanPhone}?text=${waText}" target="_blank" rel="noopener noreferrer"
+                           class="touch-btn-sm px-2.5 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                            <i data-lucide="message-circle" class="w-3.5 h-3.5 text-motorbase-success"></i>
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
+                `;
+            }
+
+            // Botón de acción directa según columna
+            let actionBtnHTML = '';
+            if (order.status === 'listos') {
+                actionBtnHTML = `
+                    <button type="button" onclick="advanceOrder('${order.id}')"
+                            class="touch-btn-sm w-full mt-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-900/30">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                        <span>Entregar</span>
+                    </button>
+                `;
+            } else {
+                const nextLabel = order.status === 'espera' ? 'Iniciar Reparación' : 'Marcar Listo';
+                actionBtnHTML = `
+                    <button type="button" onclick="advanceOrder('${order.id}')"
+                            class="touch-btn-sm w-full mt-2 bg-motorbase-blue hover:bg-blue-600 active:scale-[0.99] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5">
+                        <span>${nextLabel}</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                `;
+            }
+
+            return `
+                <article class="bg-motorbase-card ${cardBorderClass} rounded-2xl p-4 transition-all flex flex-col justify-between space-y-3">
+                    <div>
+                        <!-- Cabecera Placa + Badge Domicilio -->
+                        <div class="flex items-center justify-between gap-2 mb-1.5">
+                            <span class="px-2.5 py-1 rounded-lg bg-motorbase-dark border border-slate-700 text-xs font-extrabold tracking-wider text-motorbase-cyan">
+                                ${order.placa}
+                            </span>
+                            ${domicilioBadge}
+                        </div>
+
+                        <!-- Vehículo y Cliente -->
+                        <h4 class="font-bold text-white text-base leading-snug">${order.vehiculo}</h4>
+                        <p class="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                            <i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span>${order.cliente} • ${order.telefono}</span>
+                        </p>
+
+                        <!-- Descripción Servicio -->
+                        <p class="text-xs text-slate-300 bg-motorbase-dark/80 border border-slate-800/90 rounded-xl p-2.5 mt-2.5 leading-relaxed">
+                            ${order.servicio}
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 pt-1 border-t border-slate-800/80">
+                        <!-- Trazabilidad Temporal Obligatoria -->
+                        <div class="text-[11px] text-slate-400 space-y-0.5">
+                            <div class="flex items-center justify-between">
+                                <span>Llegada: <strong class="text-slate-200">${order.fechaLlegada}</strong></span>
+                                <span>Fase: <strong class="text-motorbase-cyan">${order.horaFase}</strong></span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span>Mecánico: <span class="text-slate-300">${order.mecanico}</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Monto en Quetzales -->
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-slate-400">Estimado:</span>
+                            <span class="font-bold text-white text-sm">${formatGTQ(order.costo)}</span>
+                        </div>
+
+                        ${contactButtonsHTML}
+                        ${actionBtnHTML}
+                    </div>
+                </article>
+            `;
+        }
+
+        // --- RENDERIZADO DEL HISTÓRICO INFERIOR DE ÓRDENES ENTREGADAS ---
+        function renderDeliveredHistory() {
+            const container = document.getElementById('delivered-history-list');
+            const deliveredOrders = orders.filter(o => o.status === 'entregado');
+            document.getElementById('count-entregados').textContent = `${deliveredOrders.length} Entregados`;
+
+            if (deliveredOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-motorbase-card/50 border border-slate-800 rounded-2xl p-6 text-center text-sm text-slate-400">
+                        Aún no hay órdenes entregadas en el historial de hoy.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = deliveredOrders.map(order => {
+                // Badge verde ENTREGADO con etiqueta roja superpuesta en esquina inferior derecha si fue A Domicilio
+                const domicilioOverlay = order.isDomicilio
+                    ? `<span class="mt-1 sm:mt-0 sm:-ml-2 px-2 py-0.5 rounded bg-motorbase-danger text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md border border-red-400/40">
+                         A DOMICILIO
+                       </span>`
+                    : '';
+
+                return `
+                    <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="space-y-1.5 flex-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-extrabold text-motorbase-cyan text-sm">${order.placa}</span>
+                                <span class="font-bold text-white text-base">${order.vehiculo}</span>
+                                <span class="text-xs text-slate-400">• Cliente: ${order.cliente}</span>
+                            </div>
+                            <p class="text-xs text-slate-400">
+                                <strong class="text-slate-300">Mecánico:</strong> ${order.mecanico}
+                            </p>
+                            <p class="text-sm text-slate-200">
+                                <strong class="text-slate-400 font-medium">Servicio Reparado:</strong> ${order.servicio}
+                            </p>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 pt-1">
+                                <span>Llegada: <strong class="text-slate-200">${order.fechaLlegada} ${order.horaLlegada}</strong></span>
+                                <span>|</span>
+                                <span>Entrega: <strong class="text-motorbase-success">${order.fechaEntrega}</strong></span>
+                                <span>|</span>
+                                <span>Costo Total: <strong class="font-bold text-white text-sm">${formatGTQ(order.costo)}</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Distintivo Verde ENTREGADO + Etiqueta Roja A DOMICILIO -->
+                        <div class="relative inline-flex flex-col items-end self-start lg:self-center shrink-0">
+                            <div class="px-4 py-2 rounded-xl bg-motorbase-success/15 border border-motorbase-success text-motorbase-success font-extrabold text-xs tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                                <span>ENTREGADO</span>
+                            </div>
+                            ${domicilioOverlay}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- RENDERIZADO COMPLETO DEL TABLERO ---
+        function renderBoard() {
+            const cols = {
+                espera: document.getElementById('col-espera'),
+                reparacion: document.getElementById('col-reparacion'),
+                domicilio: document.getElementById('col-domicilio'),
+                listos: document.getElementById('col-listos')
+            };
+
+            const lists = { espera: [], reparacion: [], domicilio: [], listos: [] };
+            orders.forEach(o => {
+                if (lists[o.status]) lists[o.status].push(o);
+            });
+
+            Object.keys(cols).forEach(key => {
+                document.getElementById(`count-${key}`).textContent = lists[key].length;
+                if (lists[key].length === 0) {
+                    cols[key].innerHTML = `
+                        <div class="border border-dashed border-slate-800 rounded-xl p-6 text-center text-xs text-slate-500">
+                            Sin vehículos en esta fase
+                        </div>
+                    `;
+                } else {
+                    cols[key].innerHTML = lists[key].map(createBoardCardHTML).join('');
+                }
+            });
+
+            renderDeliveredHistory();
+        }
+
+        // --- REGISTRO DE NUEVO VEHÍCULO (+ REGISTRAR AUTO) ---
+        document.getElementById('form-register-car').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const placa = document.getElementById('reg-placa').value.trim().toUpperCase();
+            const vehiculo = document.getElementById('reg-vehiculo').value.trim();
+            const cliente = document.getElementById('reg-cliente').value.trim();
+            const telefono = document.getElementById('reg-telefono').value.trim();
+            const servicio = document.getElementById('reg-servicio').value.trim();
+            const costo = parseFloat(document.getElementById('reg-costo').value) || 0;
+            const isDomicilio = document.getElementById('reg-domicilio').checked;
+
+            const dt = getCurrentDateTime();
+            const currentMech = document.getElementById('mechanic-name-input').value.trim() || 'Carlos Mendoza';
+
+            const newOrder = {
+                id: 'ORD-' + Math.floor(100 + Math.random() * 900),
+                placa,
+                vehiculo,
+                cliente,
+                telefono,
+                servicio,
+                costo,
+                isDomicilio,
+                status: isDomicilio ? 'domicilio' : 'espera',
+                fechaLlegada: dt.date,
+                horaLlegada: dt.time,
+                horaFase: dt.time,
+                fechaEntrega: null,
+                mecanico: currentMech
+            };
+
+            orders.unshift(newOrder);
+            logAudit(`Nuevo ingreso registrado: Placa ${placa} (${vehiculo}) - ${isDomicilio ? 'A Domicilio' : 'En Espera'} - ${formatGTQ(costo)}.`);
+            
+            this.reset();
+            switchTab('tablero');
+            renderAll();
+            showToast(`Vehículo ${placa} ingresado al Tablero`);
+        });
+
+        // --- HISTORIAL POR PLACA Y RE-INGRESO RÁPIDO ---
+        function renderQuickPlates() {
+            const uniquePlates = [...new Set(orders.map(o => o.placa))];
+            const bar = document.getElementById('quick-plates-bar');
+            bar.innerHTML = `<span class="text-slate-400">Placas registradas:</span>` + 
+                uniquePlates.map(p => `
+                    <button type="button" onclick="searchPlate('${p}')" 
+                            class="px-2.5 py-1 rounded-lg bg-motorbase-dark border border-slate-800 hover:border-motorbase-cyan text-motorbase-cyan font-bold transition">
+                        ${p}
+                    </button>
+                `).join('');
+        }
+
+        function searchPlate(plateQuery) {
+            const query = (plateQuery || document.getElementById('search-plate-input').value).trim().toUpperCase();
+            document.getElementById('search-plate-input').value = query;
+            const resultContainer = document.getElementById('plate-history-result');
+
+            if (!query) {
+                resultContainer.innerHTML = `
+                    <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-6 text-center text-sm text-slate-400">
+                        Ingrese un número de placa para consultar su expediente.
+                    </div>
+                `;
+                return;
+            }
+
+            const matchingOrders = orders.filter(o => o.placa.toUpperCase() === query);
+
+            if (matchingOrders.length === 0) {
+                resultContainer.innerHTML = `
+                    <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-6 text-center space-y-3">
+                        <p class="text-sm text-slate-300">No se encontraron registros históricos para la placa <strong class="text-white">${query}</strong>.</p>
+                        <button type="button" onclick="switchTab('registrar'); document.getElementById('reg-placa').value='${query}';" 
+                                class="touch-btn-sm px-4 py-2 rounded-xl bg-motorbase-blue text-white text-xs font-bold">
+                            + Registrar Nuevo Vehículo con esta Placa
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Tomar los datos base del registro más reciente
+            const latest = matchingOrders[0];
+
+            resultContainer.innerHTML = `
+                <div class="bg-motorbase-card border border-slate-800 rounded-2xl p-6 space-y-5">
+                    <!-- Cabecera del Expediente + Botón de Re-ingreso Rápido -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <span class="px-3 py-1 rounded-lg bg-motorbase-dark border border-slate-700 text-sm font-extrabold text-motorbase-cyan">
+                                    ${latest.placa}
+                                </span>
+                                <h3 class="text-xl font-bold text-white">${latest.vehiculo}</h3>
+                            </div>
+                            <p class="text-sm text-slate-400 mt-1.5">
+                                Propietario: <strong class="text-slate-200">${latest.cliente}</strong> • Teléfono: <strong class="text-slate-200">${latest.telefono}</strong>
+                            </p>
+                        </div>
+
+                        <button type="button" onclick="toggleQuickReentryForm()" 
+                                class="touch-target px-5 py-3 rounded-xl bg-motorbase-blue hover:bg-blue-600 text-white font-bold text-sm shadow-lg shadow-motorbase-blue/25 transition flex items-center justify-center gap-2 shrink-0">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                            <span>+ Abrir Nueva Orden / Re-ingresar a Reparación</span>
+                        </button>
+                    </div>
+
+                    <!-- Formulario Inline de Re-ingreso Rápido (Pre-llenado automático) -->
+                    <div id="quick-reentry-box" class="hidden bg-motorbase-dark border border-motorbase-cyan/50 rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-bold text-motorbase-cyan text-sm uppercase tracking-wider">Re-ingreso Rápido al Taller (Datos Pre-llenados)</h4>
+                            <button type="button" onclick="toggleQuickReentryForm()" class="text-slate-400 hover:text-white text-xs">Cerrar</button>
+                        </div>
+                        <form onsubmit="submitQuickReentry(event, '${latest.placa}')" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Nueva Falla o Servicio a Realizar *</label>
+                                <input type="text" id="reentry-servicio" required placeholder="Describa el nuevo servicio requerido..."
+                                       class="touch-target w-full px-4 bg-motorbase-card border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Costo Estimado (GTQ) *</label>
+                                    <input type="number" id="reentry-costo" required min="0" step="0.01" placeholder="350.00"
+                                           class="touch-target w-full px-4 bg-motorbase-card border border-slate-800 rounded-xl text-white font-bold placeholder-slate-500 focus:outline-none focus:border-motorbase-cyan">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">¿Servicio A Domicilio? (Sí/No)</label>
+                                    <select id="reentry-domicilio" class="touch-target w-full px-4 bg-motorbase-card border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-motorbase-cyan">
+                                        <option value="no">No — Atención en Taller (En Espera)</option>
+                                        <option value="si">Sí — Servicio A Domicilio</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="touch-target w-full bg-motorbase-success hover:bg-emerald-600 text-white font-bold rounded-xl transition flex items-center justify-center gap-2">
+                                <i data-lucide="check" class="w-5 h-5"></i>
+                                <span>Confirmar Re-ingreso y Enviar al Tablero</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Listado de Órdenes Históricas de esta Placa -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Historial de Servicios (${matchingOrders.length})</h4>
+                        ${matchingOrders.map(ord => `
+                            <div class="bg-motorbase-dark/90 border ${ord.isDomicilio ? 'border-red-500/50' : 'border-slate-800'} rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 uppercase">${ord.status}</span>
+                                        ${ord.isDomicilio ? '<span class="text-[11px] font-bold px-2 py-0.5 rounded bg-motorbase-danger text-white">A DOMICILIO</span>' : ''}
+                                        <span class="text-xs text-slate-400">Ingreso: ${ord.fechaLlegada} ${ord.horaLlegada}</span>
+                                    </div>
+                                    <p class="text-sm text-white font-medium">${ord.servicio}</p>
+                                    <p class="text-xs text-slate-400">Mecánico: ${ord.mecanico}</p>
+                                </div>
+                                <div class="text-left sm:text-right shrink-0">
+                                    <span class="font-bold text-white text-sm">${formatGTQ(ord.costo)}</span>
+                                    ${ord.fechaEntrega ? `<p class="text-[11px] text-motorbase-success">Entregado: ${ord.fechaEntrega}</p>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function toggleQuickReentryForm() {
+            const box = document.getElementById('quick-reentry-box');
+            if (box) box.classList.toggle('hidden');
+        }
+
+        function submitQuickReentry(e, placa) {
+            e.preventDefault();
+            const baseOrder = orders.find(o => o.placa === placa);
+            if (!baseOrder) return;
+
+            const nuevaFalla = document.getElementById('reentry-servicio').value.trim();
+            const nuevoCosto = parseFloat(document.getElementById('reentry-costo').value) || 0;
+            const isDom = document.getElementById('reentry-domicilio').value === 'si';
+            const dt = getCurrentDateTime();
+            const currentMech = document.getElementById('mechanic-name-input').value.trim() || baseOrder.mecanico;
+
+            const newOrder = {
+                id: 'ORD-' + Math.floor(100 + Math.random() * 900),
+                placa: baseOrder.placa,
+                vehiculo: baseOrder.vehiculo,
+                cliente: baseOrder.cliente,
+                telefono: baseOrder.telefono,
+                servicio: nuevaFalla,
+                costo: nuevoCosto,
+                isDomicilio: isDom,
+                status: isDom ? 'domicilio' : 'espera',
+                fechaLlegada: dt.date,
+                horaLlegada: dt.time,
+                horaFase: dt.time,
+                fechaEntrega: null,
+                mecanico: currentMech
+            };
+
+            orders.unshift(newOrder);
+            logAudit(`Re-ingreso rápido desde Historial: Placa ${baseOrder.placa} (${isDom ? 'A Domicilio' : 'En Espera'}) - ${formatGTQ(nuevoCosto)}.`);
+            switchTab('tablero');
+            renderAll();
+            showToast(`Nueva orden creada para ${baseOrder.placa}`);
+        }
+
+        document.getElementById('btn-search-plate').addEventListener('click', () => searchPlate());
+        document.getElementById('search-plate-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchPlate();
+        });
+
+        // --- RENDERIZADO DE AUDITORÍA ---
+        function renderAudit() {
+            const tbody = document.getElementById('audit-table-body');
+            document.getElementById('audit-count-badge').textContent = `${auditLogs.length} registros`;
+            tbody.innerHTML = auditLogs.map(log => `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-3.5 px-4 text-xs text-slate-400 whitespace-nowrap">${log.timestamp}</td>
+                    <td class="py-3.5 px-4 font-semibold text-motorbase-cyan whitespace-nowrap">${log.userRole}</td>
+                    <td class="py-3.5 px-4 text-slate-200 whitespace-nowrap">${log.mechanic}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${log.action}</td>
+                </tr>
+            `).join('');
+        }
+
+        // --- RENDERIZADO DE RESUMEN ---
+        function renderResumen() {
+            const activos = orders.filter(o => o.status !== 'entregado');
+            const domicilio = activos.filter(o => o.isDomicilio);
+            const listos = orders.filter(o => o.status === 'listos');
+            const entregados = orders.filter(o => o.status === 'entregado');
+            const totalIngresos = entregados.reduce((acc, o) => acc + (parseFloat(o.costo) || 0), 0);
+
+            document.getElementById('kpi-activos').textContent = activos.length;
+            document.getElementById('kpi-domicilio').textContent = domicilio.length;
+            document.getElementById('kpi-listos').textContent = listos.length;
+            document.getElementById('kpi-ingresos').textContent = formatGTQ(totalIngresos);
+            document.getElementById('kpi-entregados-count').textContent = `${entregados.length} órdenes finalizadas`;
+
+            const fases = [
+                { label: 'En Espera', count: orders.filter(o => o.status === 'espera').length, color: 'bg-slate-400' },
+                { label: 'En Reparación', count: orders.filter(o => o.status === 'reparacion').length, color: 'bg-motorbase-blue' },
+                { label: 'A Domicilio', count: orders.filter(o => o.status === 'domicilio').length, color: 'bg-motorbase-danger' },
+                { label: 'Listos para Entrega', count: listos.length, color: 'bg-motorbase-warning' }
+            ];
+
+            document.getElementById('resumen-desglose').innerHTML = fases.map(f => `
+                <div class="bg-motorbase-dark border border-slate-800 rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-3 h-3 rounded-full ${f.color}"></span>
+                        <span class="font-semibold text-slate-200 text-sm">${f.label}</span>
+                    </div>
+                    <span class="text-lg font-extrabold text-white">${f.count}</span>
+                </div>
+            `).join('');
+        }
+
+        // --- RENDERIZADO MAESTRO ---
+        function renderAll() {
+            renderBoard();
+            renderAudit();
+            renderResumen();
+            renderQuickPlates();
+            lucide.createIcons();
+        }
+
+        // Inicializar iconos en carga inicial (P-00 Login)
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
